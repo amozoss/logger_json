@@ -130,6 +130,17 @@ defmodule LoggerJSON.Formatters.GoogleCloud do
       |> maybe_put(:httpRequest, format_http_request(meta))
       |> maybe_merge(encode(message, redactors))
       |> maybe_merge(encode(metadata, redactors))
+
+    line =
+      if level == :error do
+        line
+        |> maybe_put("@type", "type.googleapis.com/google.devtools.clouderrorreporting.v1beta1.ReportedErrorEvent")
+      else
+        line
+      end
+
+    line =
+      line
       |> Jason.encode_to_iodata!(encoder_opts)
 
     [line, "\n"]
